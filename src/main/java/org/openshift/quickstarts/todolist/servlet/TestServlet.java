@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openshift.quickstarts.todolist.util.GetSsFromJson;
 import org.openshift.quickstarts.todolist.util.HttpUtil;
 
 /**
@@ -19,7 +20,14 @@ public class TestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html; charset=UTF-8");
-        String string = HttpUtil.get("https://free-ss.site/");
+//        String string = HttpUtil.get("https://free-ss.site/");
+        String string="a";
+		try {
+			string = GetSsFromJson.getSsJson();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         PrintWriter writer = resp.getWriter();
         writer.write(string);
         writer.flush();
