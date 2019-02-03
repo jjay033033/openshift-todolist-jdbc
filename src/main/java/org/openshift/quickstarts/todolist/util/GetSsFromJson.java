@@ -2,13 +2,15 @@ package org.openshift.quickstarts.todolist.util;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 import org.openshift.quickstarts.todolist.vo.ConfVO;
 
@@ -54,6 +56,9 @@ public class GetSsFromJson {
 		String b = strs[1];
 		String c = strs[2];
 		String setCookie = strs[3];
+		long currentTimeMillis = System.currentTimeMillis();
+		System.out.println(currentTimeMillis);
+		String yi = HttpUtil.get("https://free-ss.site/ss.json?_="+currentTimeMillis);
 		
 		String url = "https://free-ss.site/data.php";
 		Map<String, String> params = new HashMap<String, String>();
@@ -97,7 +102,7 @@ public class GetSsFromJson {
 		headers.put("x-requested-with", "XMLHttpRequest");
 		headers.put("Cookie", setCookie);
 		String str = HttpUtil.post(url, params, formParams, headers);
-
+		System.out.println("最终返回："+str);
 //		String a = "bfd153389ce78a61";
 //		String b = "c17b952ea46fd803";
 //		String c = "10b5b4075947ef97";
@@ -128,8 +133,11 @@ public class GetSsFromJson {
 		HttpResult hr = HttpUtil.getForSetCookies(url);
 		String setCookie = hr.getSetCookie();
 		String str = hr.getContent();
+		str = str.replaceAll("\\n( )*//.*\\n", "");
+//		System.out.println(str);
 		str = str.replaceAll("/\\*([^\\*]*)\\*/", "");
-		
+		System.out.println("精简后html：");
+		System.out.println(str);
 		int begin = str.indexOf("else{var");
 		int end = str.indexOf("}", begin);
 		String useStr = str.substring(begin, end);
@@ -158,43 +166,28 @@ public class GetSsFromJson {
 		return result;
 	}
 	
+	public static void test(){
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("javascript");
+        try{
+//            engine.eval("function add(a,b){return a1(a,b);}function a1(a,b){return a+1;}");
+//            engine.eval("function encc(r) {	var n = str2bin(r),		t = al(n, r.length),		o = new Array(8);	o[0] = 1937774191, o[1] = 1226093241, o[2] = 388252375, o[3] = 3666478592, o[4] = 2842636476, o[5] = 372324522, o[6] = 3817729613, o[7] = 2969243214;	for (var a = 0; a < t; a++) o = zip(o, n, a);	return word2str(o, \"\").substr(0, 16)}function word2str(r, n) {	for (var t = Array(8).join(\"0\"), o = 0; o < r.length; o++) r[o] = (t + (r[o] >>> 0).toString(16)).slice(-8);	return r.join(n)}function str2bin(r) {	for (var n = new Array(r.length >> 2), t = 0; t < 8 * r.length; t += 8) n[t >> 5] |= (255 & r.charCodeAt(t / 8)) << 24 - t % 32;	return n}function al(r, n) {	r[n >> 2] |= 128 << 24 - n % 4 * 8;	for (var t = 1 + (n + 8 >> 6), o = 16 * t, a = 1 + (n >> 2); a < o; a++) r[a] = 0;	return r[o - 1] = 8 * n, t}function p0(r) {	return r ^ br(r, 9) ^ br(r, 17)}function p1(r) {	return r ^ br(r, 15) ^ br(r, 23)}function br(r, n) {	return r << n | r >>> 32 - n}function zip(r, n, o) {	for (var a = new Array(68), u = new Array(64), f = 0; f < 68; f++) a[f] = f < 16 ? n[16 * o + f] : p1(a[f - 16] ^ a[f - 9] ^ br(a[f - 3], 15)) ^ br(a[f - 13], 7) ^ a[f - 6];	for (f = 0; f < 64; f++) u[f] = a[f] ^ a[f + 4];	var e, i, c, b, v = r[0],		g = r[1],		l = r[2],		d = r[3],		s = r[4],		h = r[5],		p = r[6],		w = r[7];	for (f = 0; f < 64; f++) i = (e = br(aa(br(v, 12), s, br(t(f), f)), 7)) ^ br(v, 12), c = aa(ff(v, g, l, f), d, i, u[f]), b = aa(gg(s, h, p, f), w, e, a[f]), d = l, l = br(g, 9), g = v, v = c, w = p, p = br(h, 19), h = s, s = p0(b);	return r[0] ^= v, r[1] ^= g, r[2] ^= l, r[3] ^= d, r[4] ^= s, r[5] ^= h, r[6] ^= p, r[7] ^= w, r}function t(r) {	return 0 <= r && r < 16 ? 2043430169 : r < 64 ? 2055708042 : void 0}function ff(r, n, t, o) {	return 0 <= o && o < 16 ? r ^ n ^ t : o < 64 ? r & n | r & t | n & t : void 0}function gg(r, n, t, o) {	return 0 <= o && o < 16 ? r ^ n ^ t : o < 64 ? r & n | ~r & t : void 0}function sa(r, n) {	var t = (65535 & r) + (65535 & n);	return (r >> 16) + (n >> 16) + (t >> 16) << 16 | 65535 & t}function aa() {	for (var r = 0, n = 0; n < arguments.length; n++) r = sa(r, arguments[n]);	return r}");
+            engine.eval("function encc(r){var n=str2bin(r),t=al(n,r.length),o=new Array(8);o[0]=1937774191,o[1]=1226093241,o[2]=388252375,o[3]=3666478592,o[4]=2842636476,o[5]=372324522,o[6]=3817729613,o[7]=2969243214;for(var a=0;a<t;a++)o=zip(o,n,a);return word2str(o,\"\").substr(0,16)}function word2str(r,n){for(var t=Array(8).join(\"0\"),o=0;o<r.length;o++)r[o]=(t+(r[o]>>>0).toString(16)).slice(-8);return r.join(n)}function str2bin(r){for(var n=new Array(r.length>>2),t=0;t<8*r.length;t+=8)n[t>>5]|=(255&r.charCodeAt(t/8))<<24-t%32;return n}function al(r,n){r[n>>2]|=128<<24-n%4*8;for(var t=1+(n+8>>6),o=16*t,a=1+(n>>2);a<o;a++)r[a]=0;return r[o-1]=8*n,t}function p0(r){return r^br(r,9)^br(r,17)}function p1(r){return r^br(r,15)^br(r,23)}function br(r,n){return r<<n|r>>>32-n}function zip(r,n,o){for(var a=new Array(68),u=new Array(64),f=0;f<68;f++)a[f]=f<16?n[16*o+f]:p1(a[f-16]^a[f-9]^br(a[f-3],15))^br(a[f-13],7)^a[f-6];for(f=0;f<64;f++)u[f]=a[f]^a[f+4];var e,i,c,b,v=r[0],g=r[1],l=r[2],d=r[3],s=r[4],h=r[5],p=r[6],w=r[7];for(f=0;f<64;f++)i=(e=br(aa(br(v,12),s,br(t(f),f)),7))^br(v,12),c=aa(ff(v,g,l,f),d,i,u[f]),b=aa(gg(s,h,p,f),w,e,a[f]),d=l,l=br(g,9),g=v,v=c,w=p,p=br(h,19),h=s,s=p0(b);return r[0]^=v,r[1]^=g,r[2]^=l,r[3]^=d,r[4]^=s,r[5]^=h,r[6]^=p,r[7]^=w,r}function t(r){return 0<=r&&r<16?2043430169:r<64?2055708042:void 0}function ff(r,n,t,o){return 0<=o&&o<16?r^n^t:o<64?r&n|r&t|n&t:void 0}function gg(r,n,t,o){return 0<=o&&o<16?r^n^t:o<64?r&n|~r&t:void 0}function sa(r,n){var t=(65535&r)+(65535&n);return(r>>16)+(n>>16)+(t>>16)<<16|65535&t}function aa(){for(var r=0,n=0;n<arguments.length;n++)r=sa(r,arguments[n]);return r}");
+        	if (engine instanceof Invocable) {
+                Invocable in = (Invocable) engine;
+                System.out.println(in.invokeFunction("encc","ac840f362eb1957d"));
+            }
+            }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+	
 	public static void main(String[] args) throws Exception {
-		long t1 = System.currentTimeMillis();
-		long t2 = t1+1533977960;
-		System.out.println(new Date(t1));
-		System.out.println(new Date(t2));
+//		String ssJson = getSsJson();
+//		System.out.println("结果：");
+//		System.out.println(ssJson);
+		test();
 		
-//		System.out.println(new Date(1533977960));//17.12
-//		String setCookie = "__cfduid=dee67780f4389750aa60c19186cceca551533974288; expires=Sun, 11-Aug-19 07:58:08 GMT; path=/; domain=.free-ss.site; HttpOnly; Secure";
-//		setCookie = setCookie.substring(0, setCookie.indexOf(";"));
-//		System.out.println(setCookie);
-//		System.out.println(getSsJson());
-//		String str = FileUtil.readFile("f:/a.txt");
-////		str = str.replace("\r\n", "");
-//		String regex = "/\\*([^\\*]*)\\*/";
-//		String replaceAll = str.replaceAll(regex, "");
-//		
-//		int begin = replaceAll.indexOf("else{var");
-//		int end = replaceAll.indexOf("}", begin);
-//		String useStr = replaceAll.substring(begin, end);
-//		int aBegin = useStr.indexOf("a='")+3;
-//		int aEnd = useStr.indexOf("'",aBegin);
-//		int bBegin = useStr.indexOf("b='")+3;
-//		int bEnd = useStr.indexOf("'",bBegin);
-//		int cBegin = useStr.indexOf("c='")+3;
-//		int cEnd = useStr.indexOf("'",cBegin);
-//		
-//		String a = useStr.substring(aBegin, aEnd);
-//		String b = useStr.substring(bBegin, bEnd);
-//		String c = useStr.substring(cBegin, cEnd);
-//		
-//		System.out.println(a);
-//		System.out.println(b);
-//		System.out.println(c);
-//		String regex2 = "/\\*.*\\*/";
-//		String string = "/*if(detect){var a='6bed052c793a481f';var c='7f16ba089ec3245d';var b='eca76058b21349fd';}else{var c='329687a0f4b5ced1';var b='b2fed4c70a316598';var a='62a50bc831fde749';}*/";
-//		boolean matches = string.matches(regex2);
-//		System.out.println(matches);
 	}
 
 }
